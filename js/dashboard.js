@@ -365,6 +365,9 @@ const Dashboard = (() => {
 
     Storage.setWritings(writings);
 
+    // Sync remote updates dynamically
+    Sync.publishWriting({ ...writing, chapters: writingData ? writingData.chapters : [] });
+
     closeModal('edit-writing-modal');
     editingSlug = null;
     renderWritings();
@@ -474,8 +477,11 @@ const Dashboard = (() => {
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify({ action: 'create_tab', writingTitle: title })
         });
+
+        // Publish to remote hosting database
+        Sync.publishWriting({ ...writing, chapters: chapters }).then(res => console.log('Novel payload saved:', res));
       } catch (e) {
-        console.warn('Could not create sheet tab:', e);
+        console.warn('Could not create sheet tab or upload remote payload:', e);
       }
     }
 

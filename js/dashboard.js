@@ -194,6 +194,10 @@ const Dashboard = (() => {
          </div>`
       : '';
 
+    const feedback = Storage.getFeedback(writing.slug) || [];
+    const uniqueViewers = new Set(feedback.map(f => f.viewerName).filter(Boolean)).size;
+    const displayViewerCount = Math.max(writing.viewerCount || 0, uniqueViewers);
+
     return `
       <div class="writing-card" data-slug="${writing.slug}">
         <div class="writing-card-header">
@@ -206,7 +210,7 @@ const Dashboard = (() => {
 
         <div class="writing-card-meta">
           <span class="writing-card-date">📅 ${new Date(writing.createdAt).toLocaleDateString()}</span>
-          <span class="writing-card-viewers">👥 ${writing.viewerCount || 0} viewers</span>
+          <span class="writing-card-viewers">👥 ${displayViewerCount} viewers</span>
         </div>
 
         <div class="writing-card-feedback-types">

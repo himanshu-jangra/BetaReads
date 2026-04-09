@@ -201,7 +201,8 @@ const Reader = (() => {
     readerView.innerHTML = `
       <div class="reader-container">
         <!-- Top Bar -->
-        <div class="reader-topbar">
+        <div class="reader-topbar" style="position: relative;">
+          <div id="overall-progress-bar" style="position: absolute; bottom: 0; left: 0; height: 3px; background: var(--md-primary); width: 0%; transition: width 0.2s ease-out; z-index: 10; border-radius: 0 2px 2px 0;"></div>
           <div class="reader-topbar-left">
             <button class="btn-icon reader-menu-btn" onclick="Reader.toggleChapterNav()" aria-label="Toggle chapter navigation">☰</button>
             <div>
@@ -375,6 +376,13 @@ const Reader = (() => {
     if (nav) nav.classList.remove('open');
     const overlay = document.getElementById('drawer-overlay');
     if (overlay) overlay.classList.remove('open');
+
+    // Update overall progress bar immediately (on mount)
+    const overallProgressBar = document.getElementById('overall-progress-bar');
+    if (overallProgressBar && chapters.length > 0) {
+      const totalProgress = (index / chapters.length) * 100;
+      overallProgressBar.style.width = `${totalProgress}%`;
+    }
   }
 
   /**
@@ -501,6 +509,15 @@ const Reader = (() => {
         if (chapterProgress[activeChapter] >= 90) {
           navItems[activeChapter].classList.add('read');
         }
+      }
+
+      // Update global reading progress bar
+      const overallProgressBar = document.getElementById('overall-progress-bar');
+      if (overallProgressBar && chapters.length > 0) {
+        const currentChapterBase = activeChapter;
+        const currentChapterPercent = progress / 100;
+        const totalProgress = ((currentChapterBase + currentChapterPercent) / chapters.length) * 100;
+        overallProgressBar.style.width = `${totalProgress}%`;
       }
     });
   }

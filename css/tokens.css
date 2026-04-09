@@ -1,0 +1,204 @@
+/* ============================================================
+   BetaReads — Material 3 Expressive Pastel Design Tokens
+   ============================================================ */
+
+/* ── Light Mode (Default) ──────────────────────────────────── */
+:root {
+  /* Primary */
+  --md-primary: #44B186;
+  --md-on-primary: #FFFFFF;
+  --md-primary-container: #D6EFE5;
+  --md-on-primary-container: #0A3B28;
+
+  /* Secondary */
+  --md-secondary: #A0729A;
+  --md-on-secondary: #FFFFFF;
+  --md-secondary-container: #FFD7F5;
+  --md-on-secondary-container: #3B0738;
+
+  /* Tertiary */
+  --md-tertiary: #6A8FBF;
+  --md-on-tertiary: #FFFFFF;
+  --md-tertiary-container: #D4E4FF;
+  --md-on-tertiary-container: #001C3A;
+
+  /* Surface */
+  --md-surface: #FEFBFF;
+  --md-on-surface: #1C1B1F;
+  --md-surface-variant: #F3EDF7;
+  --md-on-surface-variant: #49454F;
+  --md-surface-container: #F4EFF4;
+  --md-surface-container-low: #F9F3F9;
+  --md-surface-container-high: #ECE6EC;
+  --md-surface-container-highest: #E6E1E5;
+  --md-surface-dim: #DED8DE;
+  --md-surface-bright: #FEFBFF;
+
+  /* Outline */
+  --md-outline: #79747E;
+  --md-outline-variant: #CAC4D0;
+
+  /* Error */
+  --md-error: #B3261E;
+  --md-on-error: #FFFFFF;
+  --md-error-container: #F9DEDC;
+  --md-on-error-container: #410E0B;
+
+  /* Success (custom) */
+  --md-success: #2E7D32;
+  --md-on-success: #FFFFFF;
+  --md-success-container: #C8E6C9;
+
+  /* Warning (custom) */
+  --md-warning: #F57C00;
+  --md-on-warning: #FFFFFF;
+  --md-warning-container: #FFE0B2;
+
+  /* Inverse */
+  --md-inverse-surface: #313033;
+  --md-inverse-on-surface: #F4EFF4;
+  --md-inverse-primary: #44B186;
+
+  /* Scrim */
+  --md-scrim: rgba(0, 0, 0, 0.32);
+  --md-scrim-heavy: rgba(0, 0, 0, 0.6);
+
+  /* ── Typography ──────────────────────────────────────────── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-mono: 'Courier Prime', 'Courier New', monospace;
+
+  /* Display */
+  --text-display-large: 600 57px/64px var(--font-sans);
+  --text-display-medium: 500 45px/52px var(--font-sans);
+  --text-display-small: 500 36px/44px var(--font-sans);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-sans);
+  --text-headline-medium: 500 28px/36px var(--font-sans);
+  --text-headline-small: 500 24px/32px var(--font-sans);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-sans);
+  --text-title-medium: 600 16px/24px var(--font-sans);
+  --text-title-small: 600 14px/20px var(--font-sans);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-sans);
+  --text-body-medium: 400 14px/20px var(--font-sans);
+  --text-body-small: 400 12px/16px var(--font-sans);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-sans);
+  --text-label-medium: 500 12px/16px var(--font-sans);
+  --text-label-small: 500 11px/16px var(--font-sans);
+
+  /* ── Spacing ─────────────────────────────────────────────── */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* ── Border Radius ───────────────────────────────────────── */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* ── Elevation (Box Shadows) ─────────────────────────────── */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.08);
+  --elevation-2: 0 2px 6px 2px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.08);
+  --elevation-3: 0 4px 8px 3px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.08);
+  --elevation-4: 0 6px 10px 4px rgba(0,0,0,0.07), 0 2px 3px rgba(0,0,0,0.1);
+  --elevation-5: 0 8px 12px 6px rgba(0,0,0,0.07), 0 4px 4px rgba(0,0,0,0.1);
+
+  /* ── Motion ──────────────────────────────────────────────── */
+  --motion-duration-short: 150ms;
+  --motion-duration-medium: 300ms;
+  --motion-duration-long: 500ms;
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-decelerate: cubic-bezier(0, 0, 0, 1);
+  --motion-easing-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+  /* ── Z-Index ─────────────────────────────────────────────── */
+  --z-drawer: 100;
+  --z-modal-backdrop: 200;
+  --z-modal: 210;
+  --z-snackbar: 300;
+  --z-tooltip: 400;
+  --z-protection-overlay: 500;
+}
+
+/* ── Dark Mode ─────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --md-primary: #44B186;
+  --md-on-primary: #0A3B28;
+  --md-primary-container: #226b4d;
+  --md-on-primary-container: #D6EFE5;
+
+  --md-secondary: #E8B8E3;
+  --md-on-secondary: #5B2657;
+  --md-secondary-container: #744A70;
+  --md-on-secondary-container: #FFD7F5;
+
+  --md-tertiary: #B3CFEF;
+  --md-on-tertiary: #1A3D5C;
+  --md-tertiary-container: #3A5F82;
+  --md-on-tertiary-container: #D4E4FF;
+
+  --md-surface: #1C1B1F;
+  --md-on-surface: #E6E1E5;
+  --md-surface-variant: #49454F;
+  --md-on-surface-variant: #CAC4D0;
+  --md-surface-container: #211F26;
+  --md-surface-container-low: #1D1B20;
+  --md-surface-container-high: #2B2930;
+  --md-surface-container-highest: #36343B;
+  --md-surface-dim: #1C1B1F;
+  --md-surface-bright: #3B383E;
+
+  --md-outline: #938F99;
+  --md-outline-variant: #49454F;
+
+  --md-error: #F2B8B5;
+  --md-on-error: #601410;
+  --md-error-container: #8C1D18;
+  --md-on-error-container: #F9DEDC;
+
+  --md-success: #81C784;
+  --md-on-success: #1B5E20;
+  --md-success-container: #2E3B2E;
+
+  --md-warning: #FFB74D;
+  --md-on-warning: #4E2C00;
+  --md-warning-container: #3E2E1A;
+
+  --md-inverse-surface: #E6E1E5;
+  --md-inverse-on-surface: #313033;
+  --md-inverse-primary: #1F243D;
+
+  --md-scrim: rgba(0, 0, 0, 0.5);
+  --md-scrim-heavy: rgba(0, 0, 0, 0.75);
+
+  --elevation-1: 0 1px 3px 1px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.3);
+  --elevation-2: 0 2px 6px 2px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.3);
+  --elevation-3: 0 4px 8px 3px rgba(0,0,0,0.25), 0 1px 3px rgba(0,0,0,0.3);
+  --elevation-4: 0 6px 10px 4px rgba(0,0,0,0.25), 0 2px 3px rgba(0,0,0,0.35);
+  --elevation-5: 0 8px 12px 6px rgba(0,0,0,0.25), 0 4px 4px rgba(0,0,0,0.35);
+}
+
+/* ── Reduced Motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-short: 0ms;
+    --motion-duration-medium: 0ms;
+    --motion-duration-long: 0ms;
+  }
+}

@@ -1,0 +1,450 @@
+/* ============================================================
+   BetaReads — Dashboard Layout & Styles
+   ============================================================ */
+
+/* ── Dashboard Container ───────────────────────────────────── */
+.dashboard {
+  padding: var(--space-lg) 0;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.dashboard-header h1 {
+  font: var(--text-headline-large);
+  color: var(--md-on-surface);
+}
+
+.dashboard-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ── Top Navbar ────────────────────────────────────────────── */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--md-surface);
+  border-bottom: 1px solid var(--md-outline-variant);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: background-color var(--motion-duration-medium) var(--motion-easing-standard);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font: var(--text-title-large);
+  color: var(--md-primary);
+  text-decoration: none;
+}
+
+.navbar-brand svg {
+  width: 28px;
+  height: 28px;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ── Writing Card Grid ─────────────────────────────────────── */
+.writing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--space-lg);
+}
+
+/* ── Writing Card ──────────────────────────────────────────── */
+.writing-card {
+  background: var(--md-surface-container-low);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--elevation-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: all var(--motion-duration-short) var(--motion-easing-standard);
+  position: relative;
+  overflow: hidden;
+}
+
+.writing-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--md-primary), var(--md-tertiary));
+  opacity: 0;
+  transition: opacity var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.writing-card:hover {
+  box-shadow: var(--elevation-3);
+  transform: translateY(-2px);
+}
+
+.writing-card:hover::before {
+  opacity: 1;
+}
+
+.writing-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.writing-card-title {
+  font: var(--text-title-large);
+  color: var(--md-on-surface);
+}
+
+.writing-card-credit {
+  font: var(--text-body-medium);
+  color: var(--md-on-surface-variant);
+  font-style: italic;
+}
+
+.writing-card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.writing-card-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font: var(--text-label-small);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
+}
+
+.writing-card-date {
+  font: var(--text-label-small);
+  color: var(--md-on-surface-variant);
+}
+
+.writing-card-viewers {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font: var(--text-label-small);
+  color: var(--md-on-surface-variant);
+}
+
+/* Feedback type chips on card */
+.writing-card-feedback-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.writing-card-feedback-types .chip {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+}
+
+/* Card actions row */
+.writing-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: auto;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--md-outline-variant);
+}
+
+.writing-card-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+/* Share link area */
+.writing-card-share {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.writing-card-share-url {
+  font: var(--text-body-small);
+  color: var(--md-on-surface-variant);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  background: var(--md-surface-container);
+  padding: 6px 10px;
+  border-radius: var(--radius-xs);
+}
+
+/* Password display */
+.writing-card-password {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font: var(--text-body-small);
+  color: var(--md-on-surface-variant);
+}
+
+.writing-card-password .password-mask {
+  letter-spacing: 2px;
+}
+
+/* ── Add Writing Modal Steps ───────────────────────────────── */
+.add-writing-step {
+  display: none;
+}
+
+.add-writing-step.active {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  animation: viewFadeIn var(--motion-duration-medium) var(--motion-easing-decelerate);
+}
+
+.upload-area {
+  border: 2px dashed var(--md-outline-variant);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.upload-area:hover {
+  border-color: var(--md-primary);
+  background: var(--md-primary-container);
+}
+
+.upload-area.dragover {
+  border-color: var(--md-primary);
+  background: var(--md-primary-container);
+}
+
+.upload-area-icon {
+  font-size: 48px;
+  color: var(--md-on-surface-variant);
+  margin-bottom: var(--space-sm);
+}
+
+/* ── Feedback Dashboard ────────────────────────────────────── */
+.feedback-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.feedback-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  padding: var(--space-md);
+  background: var(--md-surface-container);
+  border-radius: var(--radius-md);
+}
+
+.feedback-filters select {
+  padding: 8px 32px 8px 12px;
+  font: var(--text-label-large);
+  border-radius: var(--radius-sm);
+}
+
+.feedback-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--md-outline-variant);
+}
+
+.feedback-count {
+  font: var(--text-label-medium);
+  color: var(--md-on-surface-variant);
+}
+
+/* ── Login Page ────────────────────────────────────────────── */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, var(--md-primary-container) 0%, var(--md-surface) 50%, var(--md-tertiary-container) 100%);
+}
+
+.login-card {
+  background: var(--md-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  box-shadow: var(--elevation-3);
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.login-brand {
+  text-align: center;
+}
+
+.login-brand h1 {
+  font: var(--text-display-small);
+  color: var(--md-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.login-brand p {
+  font: var(--text-body-medium);
+  color: var(--md-on-surface-variant);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ── Setup Wizard ──────────────────────────────────────────── */
+.setup-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, var(--md-primary-container) 0%, var(--md-surface) 50%, var(--md-secondary-container) 100%);
+}
+
+.setup-card {
+  background: var(--md-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  box-shadow: var(--elevation-3);
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.setup-brand {
+  text-align: center;
+}
+
+.setup-brand h1 {
+  font: var(--text-headline-large);
+  color: var(--md-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.setup-brand p {
+  font: var(--text-body-large);
+  color: var(--md-on-surface-variant);
+}
+
+.setup-step-content {
+  display: none;
+}
+
+.setup-step-content.active {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  animation: viewFadeIn var(--motion-duration-medium) var(--motion-easing-decelerate);
+}
+
+.setup-instructions {
+  background: var(--md-surface-container);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.setup-instructions h3 {
+  font: var(--text-title-medium);
+  color: var(--md-on-surface);
+  margin-bottom: var(--space-sm);
+}
+
+.setup-instructions ol {
+  list-style: decimal;
+  padding-left: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font: var(--text-body-medium);
+  color: var(--md-on-surface-variant);
+}
+
+/* ── Settings Section ──────────────────────────────────────── */
+.settings-section {
+  background: var(--md-surface-container-low);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.settings-section h3 {
+  font: var(--text-title-medium);
+  color: var(--md-on-surface);
+}
+
+/* ── Edit Writing Modal ────────────────────────────────────── */
+.edit-chapters-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: var(--space-sm);
+}
+
+.edit-chapter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm);
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--radius-sm);
+}
+
+.edit-chapter-index {
+  font: var(--text-label-large);
+  color: var(--md-on-surface-variant);
+  min-width: 24px;
+  text-align: center;
+}
+
+.edit-chapter-row .input-field {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+}

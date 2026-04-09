@@ -1,0 +1,237 @@
+/* ============================================================
+   BetaReads — Responsive Breakpoints
+   ============================================================ */
+
+/* ── Tablet (600–1024px) ───────────────────────────────────── */
+@media (max-width: 1024px) {
+  /* Reader: 2-column (nav + content), comment panel hidden by default */
+  .reader-container {
+    grid-template-columns: 240px 1fr;
+  }
+
+  .comment-panel {
+    position: fixed;
+    top: auto !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--md-surface);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: var(--elevation-4);
+    z-index: 200; /* above FAB */
+    max-height: 80vh;
+    transform: translateY(100%);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform var(--motion-duration-medium) var(--motion-easing-emphasized), visibility 0s linear var(--motion-duration-medium);
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+    border-top: 1px solid var(--md-outline-variant);
+    border-left: none;
+  }
+
+  .comment-panel.open {
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition: transform var(--motion-duration-medium) var(--motion-easing-emphasized), visibility 0s linear 0s;
+  }
+
+  /* We use the comment-panel classes, bottom-sheet class is no longer strictly needed but kept if used elsewhere */
+  .bottom-sheet {
+    display: flex;
+  }
+
+  .reader-content {
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  /* Dashboard */
+  .writing-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-md);
+  }
+
+  .container {
+    padding: 0 var(--space-md);
+  }
+}
+
+/* ── Mobile (<600px) ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  /* Reader: Single column */
+  .reader-container {
+    grid-template-columns: 1fr;
+  }
+
+  /* Hide chapter nav, use drawer */
+  .chapter-nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: var(--z-drawer);
+    transform: translateX(-100%);
+    transition: transform var(--motion-duration-medium) var(--motion-easing-emphasized);
+    height: 100vh;
+    border-right: none;
+    box-shadow: var(--elevation-4);
+  }
+
+  .chapter-nav.open {
+    transform: translateX(0);
+  }
+
+  /* Show menu button */
+  .reader-menu-btn {
+    display: flex;
+  }
+
+  /* Reader content full width */
+  .reader-content {
+    padding: var(--space-md);
+  }
+
+  .reader-content-inner {
+    max-width: 100%;
+  }
+
+  /* Topbar adjustments */
+  .reader-topbar {
+    padding: var(--space-sm) var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .reader-topbar-credit {
+    display: none;
+  }
+
+  /* Dashboard */
+  .writing-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .container, .container-narrow {
+    padding: 0 var(--space-md);
+  }
+
+  /* Login / Setup */
+  .login-card, .setup-card {
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+  }
+
+  .login-brand h1 {
+    font: var(--text-headline-large);
+  }
+
+  /* Modal */
+  .modal {
+    width: 95%;
+    padding: var(--space-md);
+    max-height: 85vh;
+    border-radius: var(--radius-lg);
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .navbar-brand {
+    font: var(--text-title-medium);
+  }
+
+  /* FAB */
+  .fab {
+    bottom: var(--space-md);
+    right: var(--space-md);
+  }
+
+  /* Snackbar */
+  .snackbar {
+    min-width: unset;
+    max-width: calc(100vw - 32px);
+    margin: 0 var(--space-md);
+  }
+
+  /* General tap targets */
+  .btn {
+    min-height: 48px;
+  }
+
+  .btn-icon {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .tab {
+    padding: 14px 16px;
+  }
+
+  .chapter-nav-item {
+    padding: 14px var(--space-sm);
+    min-height: 48px;
+  }
+
+  /* Stepper compact */
+  .stepper-label {
+    display: none;
+  }
+
+  /* Writing card */
+  .writing-card {
+    padding: var(--space-md);
+  }
+
+  /* Feedback table scroll */
+  .feedback-table-wrapper {
+    font-size: 13px;
+  }
+
+  .data-table th, .data-table td {
+    padding: 8px 10px;
+  }
+
+  /* Bottom sheet adjustments */
+  .bottom-sheet {
+    max-height: 80vh;
+  }
+
+  /* Viewer identity screen */
+  .viewer-identity-card {
+    padding: var(--space-lg);
+  }
+
+  .viewer-identity-card h1 {
+    font: var(--text-headline-medium);
+  }
+
+  /* Password gate */
+  .password-gate-card {
+    padding: var(--space-lg);
+  }
+}
+
+/* ── Large Desktop (>1200px) ───────────────────────────────── */
+@media (min-width: 1200px) {
+  .reader-container {
+    grid-template-columns: 280px 1fr 360px;
+  }
+
+  .reader-content {
+    padding: var(--space-2xl) var(--space-2xl);
+  }
+
+  .writing-grid {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  }
+}

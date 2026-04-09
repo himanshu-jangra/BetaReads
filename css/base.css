@@ -1,0 +1,238 @@
+/* ============================================================
+   BetaReads — Base Styles & Reset
+   ============================================================ */
+
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  font-size: 100%;
+}
+
+body {
+  font: var(--text-body-large);
+  color: var(--md-on-surface);
+  background-color: var(--md-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color var(--motion-duration-medium) var(--motion-easing-standard),
+              color var(--motion-duration-medium) var(--motion-easing-standard);
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+a {
+  color: var(--md-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+p {
+  overflow-wrap: break-word;
+}
+
+/* ── Scrollbar Styling ─────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--md-surface-container);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--md-outline-variant);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--md-surface-container);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--md-outline);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-outline-variant) var(--md-surface-container);
+}
+
+/* ── Focus Ring (Accessibility) ────────────────────────────── */
+:focus-visible {
+  outline: 3px solid var(--md-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* ── Selection ─────────────────────────────────────────────── */
+::selection {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+/* ── App Shell ─────────────────────────────────────────────── */
+#app {
+  min-height: 100vh;
+  position: relative;
+}
+
+.view {
+  display: none;
+  min-height: 100vh;
+  animation: viewFadeIn var(--motion-duration-medium) var(--motion-easing-decelerate);
+}
+
+.view.active {
+  display: block;
+}
+
+@keyframes viewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Utility Classes ───────────────────────────────────────── */
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Display */
+.hidden { display: none !important; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid { display: grid; }
+
+/* Flex utilities */
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-xs { gap: var(--space-xs); }
+.gap-sm { gap: var(--space-sm); }
+.gap-md { gap: var(--space-md); }
+.gap-lg { gap: var(--space-lg); }
+.gap-xl { gap: var(--space-xl); }
+
+/* Text */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-muted { color: var(--md-on-surface-variant); }
+.text-primary { color: var(--md-primary); }
+.text-error { color: var(--md-error); }
+.text-success { color: var(--md-success); }
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.font-display-large { font: var(--text-display-large); }
+.font-display-medium { font: var(--text-display-medium); }
+.font-headline-large { font: var(--text-headline-large); }
+.font-headline-medium { font: var(--text-headline-medium); }
+.font-headline-small { font: var(--text-headline-small); }
+.font-title-large { font: var(--text-title-large); }
+.font-title-medium { font: var(--text-title-medium); }
+.font-body-large { font: var(--text-body-large); }
+.font-body-medium { font: var(--text-body-medium); }
+.font-body-small { font: var(--text-body-small); }
+.font-label-large { font: var(--text-label-large); }
+.font-label-medium { font: var(--text-label-medium); }
+.font-label-small { font: var(--text-label-small); }
+
+/* Spacing */
+.p-sm { padding: var(--space-sm); }
+.p-md { padding: var(--space-md); }
+.p-lg { padding: var(--space-lg); }
+.p-xl { padding: var(--space-xl); }
+.m-auto { margin: auto; }
+
+/* Width */
+.w-full { width: 100%; }
+.max-w-sm { max-width: 480px; }
+.max-w-md { max-width: 640px; }
+.max-w-lg { max-width: 960px; }
+.max-w-xl { max-width: 1200px; }
+
+/* Position */
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+
+/* Overflow */
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+.overflow-y-auto { overflow-y: auto; }
+
+/* ── Container ─────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BetaReads — Beta Reader Feedback for Authors</title>
+  <meta name="description" content="Share your unpublished work with beta readers and collect rich, contextual feedback. Self-hosted, private, and powered by Google Sheets.">
+  <meta name="theme-color" content="#44B186">
+  <meta name="author" content="BetaReads">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="BetaReads — Beta Reader Feedback for Authors">
+  <meta property="og:description" content="Share your unpublished work with beta readers and collect rich, contextual feedback.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" href="./assets/icon-1080.png" type="image/png">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/reader.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!-- Markdown Parser (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js" defer></script>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ═══════════════════════════════════════════════════════════
+         VIEW: Setup Wizard (First-Run)
+         ═══════════════════════════════════════════════════════════ -->
+    <div id="setup-view" class="view">
+      <div class="setup-container">
+        <div class="setup-card">
+          <div class="setup-brand">
+            <h1 style="color: var(--md-primary);">BetaReads</h1>
+            <p>Welcome! Let's get your reading space set up.</p>
+          </div>
+
+          <!-- Stepper -->
+          <div class="stepper">
+            <div class="stepper-step active">
+              <div class="stepper-circle">1</div>
+              <span class="stepper-label">Connect Sheet</span>
+            </div>
+            <div class="stepper-line"></div>
+            <div class="stepper-step">
+              <div class="stepper-circle">2</div>
+              <span class="stepper-label">Create Account</span>
+            </div>
+          </div>
+
+          <!-- Step 1: Connect Google Sheet -->
+          <div id="setup-step-1" class="setup-step-content active">
+            <div class="setup-instructions">
+              <h3>📋 Google Apps Script Setup</h3>
+              <ol>
+                <li>Create a new Google Sheet (or open an existing one).</li>
+                <li>Go to <strong>Extensions → Apps Script</strong>.</li>
+                <li>Delete any existing code and paste the script below.</li>
+                <li>Click <strong>Save</strong> (💾), then <strong>Deploy → New Deployment</strong>.</li>
+                <li>Set Type: <strong>Web App</strong> | Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong>.</li>
+                <li>Click <strong>Deploy</strong>, complete Google's authorisation prompt.</li>
+                <li>Copy the <strong>Web App URL</strong> and paste it below.</li>
+              </ol>
+            </div>
+
+            <div style="position:relative;">
+              <div class="code-block" id="setup-script-code" style="font-size:11px;max-height:250px;"></div>
+              <button class="copy-btn" id="setup-copy-script" style="position:absolute;top:8px;right:8px;">📋 Copy Script</button>
+            </div>
+
+            <div class="input-group">
+              <label for="setup-sheet-url">Google Apps Script Web App URL</label>
+              <input type="url" class="input-field" id="setup-sheet-url" placeholder="https://script.google.com/macros/s/..." autocomplete="url">
+              <span id="setup-url-status" class="input-helper"></span>
+            </div>
+
+            <button class="btn btn-filled w-full" id="setup-validate-url">Validate & Connect</button>
+
+            <div class="info-box">
+              <span class="info-box-icon">🔒</span>
+              <span>Your credentials are stored in your own Google Sheet, which only you control. BetaReads never sends your data to any third-party server.</span>
+            </div>
+          </div>
+
+          <!-- Step 2: Create Account -->
+          <div id="setup-step-2" class="setup-step-content">
+            <div class="input-group">
+              <label for="setup-display-name">Display Name</label>
+              <input type="text" class="input-field" id="setup-display-name" placeholder="e.g. Himanshu" autocomplete="name">
+              <span class="input-helper">Internal reference only. Not shown to viewers.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="setup-email">Email (optional)</label>
+              <input type="email" class="input-field" id="setup-email" placeholder="you@example.com" autocomplete="email">
+              <span class="input-helper">For reference only. Not used for sending mail.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="setup-username">Username</label>
+              <input type="text" class="input-field" id="setup-username" placeholder="Choose a username" autocomplete="username">
+            </div>
+
+            <div class="input-group">
+              <label for="setup-password">Password</label>
+              <div class="password-field">
+                <input type="password" class="input-field" id="setup-password" placeholder="Min 8 characters" autocomplete="new-password" minlength="8">
+              </div>
+              <span class="input-helper">Min 8 characters. SHA-256 hashed before storing.</span>
+            </div>
+
+            <span class="input-error" id="setup-account-error"></span>
+
+            <button class="btn btn-filled w-full" id="setup-create-account">Create Account & Start</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         VIEW: Login
+         ═══════════════════════════════════════════════════════════ -->
+    <div id="login-view" class="view">
+      <div class="login-container">
+        <div class="login-card">
+          <div class="login-brand">
+            <h1 style="color: var(--md-primary);">BetaReads</h1>
+            <p>Sign in to your author dashboard</p>
+          </div>
+
+          <form class="login-form" id="login-form" autocomplete="on">
+            <div class="input-group">
+              <label for="login-username">Username</label>
+              <input type="text" class="input-field" id="login-username" placeholder="Enter your username" autocomplete="username" required>
+            </div>
+
+            <div class="input-group">
+              <label for="login-password">Password</label>
+              <div class="password-field">
+                <input type="password" class="input-field" id="login-password" placeholder="Enter your password" autocomplete="current-password" required>
+              </div>
+            </div>
+
+            <span class="input-error" id="login-error"></span>
+
+            <div class="lockout-bar hidden" id="login-lockout">
+              Too many attempts. Try again in <span class="countdown" id="lockout-countdown">30s</span>
+            </div>
+
+            <button type="submit" class="btn btn-filled w-full btn-lg" id="login-submit">Log In</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         VIEW: Author Dashboard
+         ═══════════════════════════════════════════════════════════ -->
+    <div id="dashboard-view" class="view">
+      <!-- Navbar -->
+      <nav class="navbar">
+        <a href="#/" class="navbar-brand">
+          <span style="font-weight: 800; letter-spacing: -0.5px; color: var(--md-primary); font-size: 20px;">BetaReads</span>
+        </a>
+        <div class="navbar-actions">
+          <span class="font-label-medium text-muted" id="dashboard-author-name"></span>
+          <button class="btn-icon" data-theme-toggle onclick="Theme.toggle()" aria-label="Toggle theme">🌙</button>
+          <button class="btn btn-text btn-sm" id="logout-btn" aria-label="Log out">Logout</button>
+        </div>
+      </nav>
+
+      <div class="container dashboard">
+        <div class="dashboard-header">
+          <h1>Your Writings</h1>
+          <div class="dashboard-header-actions">
+            <div class="sync-indicator">
+              <span class="sync-dot synced"></span>
+              <span class="sync-label font-label-small">Synced</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Protection Disclaimer -->
+        <div class="info-box warning-box" style="margin-bottom:var(--space-lg);">
+          <span class="info-box-icon">🛡️</span>
+          <span>Content protection uses client-side techniques that deter casual copying. They cannot prevent determined users with technical knowledge. There is no watermark — Viewer identity is kept private.</span>
+        </div>
+
+        <!-- Writing Cards Grid -->
+        <div class="writing-grid" id="writings-grid"></div>
+      </div>
+
+      <!-- FAB: Add Writing -->
+      <button class="fab fab-extended" id="add-writing-fab" aria-label="Add new writing">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <span>Add Writing</span>
+      </button>
+
+      <!-- Modal Backdrop -->
+      <div class="modal-backdrop" id="modal-backdrop"></div>
+
+      <!-- ══ Add Writing Modal ══ -->
+      <div class="modal modal-wide" id="add-writing-modal">
+        <div class="modal-header">
+          <h2>Add New Writing</h2>
+          <button class="btn-icon" data-close-modal="add-writing-modal" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-body">
+          <!-- Step 1: Basic Info -->
+          <div id="add-writing-step-1" class="add-writing-step active">
+            <div class="input-group">
+              <label for="writing-title">Title *</label>
+              <input type="text" class="input-field" id="writing-title" placeholder="e.g. The Last Train">
+            </div>
+
+            <div class="input-group">
+              <label for="writing-written-by">Written by</label>
+              <input type="text" class="input-field" id="writing-written-by" placeholder="e.g. Riya Sharma & Dev Mehra">
+              <span class="input-helper">Shown to viewers. Supports pen names or multiple credits.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="writing-type">Type</label>
+              <select class="input-field" id="writing-type">
+                <option value="novel">Novel</option>
+                <option value="script">Script</option>
+                <option value="blog">Blog Post</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="modal-footer" style="padding-top:0;">
+              <button class="btn btn-text" data-close-modal="add-writing-modal">Cancel</button>
+              <button class="btn btn-filled" id="add-writing-next-1">Next →</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Content -->
+          <div id="add-writing-step-2" class="add-writing-step">
+            <div style="display:flex;gap:var(--space-sm);margin-bottom:var(--space-sm);">
+              <button class="chip chip-interactive selected" id="upload-toggle">📁 Upload File</button>
+              <button class="chip chip-interactive" id="paste-toggle">📝 Paste Text</button>
+            </div>
+
+            <!-- Upload -->
+            <div id="upload-area" class="upload-area">
+              <div class="upload-area-icon">📄</div>
+              <p class="font-body-medium">Click to upload or drag & drop</p>
+              <p class="font-label-small text-muted">.txt or .md files only</p>
+              <input type="file" id="writing-file-input" accept=".txt,.md" class="hidden">
+              <div id="upload-filename" class="font-label-medium text-primary" style="margin-top:var(--space-sm);"></div>
+            </div>
+
+            <!-- Paste -->
+            <div id="paste-area" class="hidden">
+              <textarea class="input-field" id="writing-paste-content" placeholder="Paste your writing here…" rows="12" style="font-family:var(--font-mono);font-size:13px;"></textarea>
+            </div>
+
+            <!-- Chapter Mode -->
+            <div style="margin-top:var(--space-md);">
+              <label class="font-label-large" style="display:block;margin-bottom:var(--space-sm);">Chapter Detection</label>
+              <div class="radio-group" style="flex-direction:row;gap:var(--space-lg);">
+                <label class="radio">
+                  <input type="radio" name="chapter-mode" value="auto" checked>
+                  <span>Auto (from headings)</span>
+                </label>
+                <label class="radio">
+                  <input type="radio" name="chapter-mode" value="manual">
+                  <span>Manual (break markers)</span>
+                </label>
+              </div>
+              <div id="manual-chapter-tools" class="hidden" style="margin-top:var(--space-sm);">
+                <button class="btn btn-outlined btn-sm" id="insert-break-btn">+ Insert Chapter Break</button>
+                <span class="font-label-small text-muted" style="margin-left:var(--space-sm);">Place cursor in text, then click</span>
+              </div>
+            </div>
+
+            <div class="modal-footer" style="padding-top:0;">
+              <button class="btn btn-text" id="add-writing-back-2">← Back</button>
+              <button class="btn btn-filled" id="add-writing-next-2">Next →</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Settings -->
+          <div id="add-writing-step-3" class="add-writing-step">
+            <!-- Feedback Toggles -->
+            <div class="settings-section">
+              <h3>Feedback Controls</h3>
+              <label class="toggle">
+                <input type="checkbox" id="feedback-inline" class="feedback-toggle" checked>
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                <span>💬 Inline Highlight + Comment</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" id="feedback-general" class="feedback-toggle" checked>
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                <span>📝 General Chapter Comment</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" id="feedback-rating" class="feedback-toggle" checked>
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                <span>⭐ Star / Emoji Rating</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" id="feedback-structured" class="feedback-toggle" checked>
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                <span>📊 Structured Feedback Form</span>
+              </label>
+            </div>
+
+            <!-- Password -->
+            <div class="input-group">
+              <label for="writing-password">Password Protection (optional)</label>
+              <div class="password-field">
+                <input type="text" class="input-field" id="writing-password" placeholder="Leave empty for no password">
+              </div>
+              <span class="input-helper">Viewers must enter this password before reading.</span>
+            </div>
+
+            <!-- Instructions -->
+            <div class="input-group">
+              <label for="writing-instructions">Viewer Instructions (optional)</label>
+              <textarea class="input-field" id="writing-instructions" placeholder="Custom message shown to viewers before they start reading…" rows="3"></textarea>
+            </div>
+
+            <span class="input-error" id="add-writing-error"></span>
+
+            <div class="modal-footer" style="padding-top:0;">
+              <button class="btn btn-text" id="add-writing-back-3">← Back</button>
+              <button class="btn btn-filled" id="add-writing-submit">Add Writing</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ Feedback Modal ══ -->
+      <div class="modal modal-wide" id="feedback-modal" style="max-width:90vw;">
+        <div class="modal-header">
+          <h2 id="feedback-modal-title">Feedback</h2>
+          <button class="btn-icon" id="close-feedback-modal" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="feedback-dashboard">
+            <div class="feedback-filters">
+              <input type="text" class="input-field feedback-filter" id="filter-viewer" placeholder="Filter by viewer…" style="max-width:200px;padding:8px 12px;">
+              <select class="input-field feedback-filter" id="filter-type" style="max-width:160px;padding:8px 12px;">
+                <option value="">All Types</option>
+                <option value="inline">Inline</option>
+                <option value="general">General</option>
+                <option value="rating">Rating</option>
+                <option value="structured">Structured</option>
+              </select>
+              <select class="input-field feedback-filter" id="filter-status" style="max-width:140px;padding:8px 12px;">
+                <option value="">All Status</option>
+                <option value="new">New</option>
+                <option value="edited">Edited</option>
+                <option value="deleted">Deleted</option>
+              </select>
+              <span class="feedback-count" id="feedback-count"></span>
+              <button class="btn btn-outlined btn-sm" id="export-csv-btn" style="margin-left:auto;">📥 Export CSV</button>
+            </div>
+            <div class="feedback-table-wrapper">
+              <table class="data-table" id="feedback-table">
+                <thead>
+                  <tr>
+                    <th>Viewer</th>
+                    <th>Type</th>
+                    <th>Chapter</th>
+                    <th>Selected Text</th>
+                    <th>Comment</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="feedback-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ Edit Writing Modal ══ -->
+      <div class="modal modal-wide" id="edit-writing-modal">
+        <div class="modal-header">
+          <h2>Edit Writing</h2>
+          <button class="btn-icon" id="close-edit-modal" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+          <!-- Title & Basic Info -->
+          <div class="settings-section">
+            <h3>Basic Info</h3>
+            <div class="input-group">
+              <label for="edit-writing-title">Title</label>
+              <input type="text" class="input-field" id="edit-writing-title">
+            </div>
+            <div class="input-group">
+              <label for="edit-writing-written-by">Written by</label>
+              <input type="text" class="input-field" id="edit-writing-written-by">
+            </div>
+            <div class="input-group">
+              <label for="edit-writing-type">Type</label>
+              <select class="input-field" id="edit-writing-type">
+                <option value="novel">Novel</option>
+                <option value="script">Script</option>
+                <option value="blog">Blog Post</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Chapter Names -->
+          <div class="settings-section">
+            <h3>Chapter Names</h3>
+            <div id="edit-chapters-list" class="edit-chapters-list"></div>
+          </div>
+
+          <!-- Content -->
+          <div class="settings-section">
+            <h3>Content</h3>
+            <details>
+              <summary class="font-label-large" style="cursor:pointer;padding:var(--space-sm) 0;">Show / Edit raw content</summary>
+              <textarea class="input-field" id="edit-writing-content" rows="10" style="font-family:var(--font-mono);font-size:13px;margin-top:var(--space-sm);"></textarea>
+              <span class="input-helper">⚠️ Editing content will re-parse chapters. Chapter names will be reset.</span>
+            </details>
+          </div>
+
+          <!-- Feedback Toggles -->
+          <div class="settings-section">
+            <h3>Feedback Controls</h3>
+            <label class="toggle">
+              <input type="checkbox" id="edit-feedback-inline" checked>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+              <span>💬 Inline Highlight + Comment</span>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="edit-feedback-general" checked>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+              <span>📝 General Chapter Comment</span>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="edit-feedback-rating" checked>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+              <span>⭐ Star / Emoji Rating</span>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="edit-feedback-structured" checked>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+              <span>📊 Structured Feedback Form</span>
+            </label>
+          </div>
+
+          <!-- Password & Instructions -->
+          <div class="settings-section">
+            <h3>Access</h3>
+            <div class="input-group">
+              <label for="edit-writing-password">Password Protection</label>
+              <input type="text" class="input-field" id="edit-writing-password" placeholder="Leave empty for no password">
+            </div>
+            <div class="input-group">
+              <label for="edit-writing-instructions">Viewer Instructions</label>
+              <textarea class="input-field" id="edit-writing-instructions" placeholder="Custom message shown to viewers…" rows="3"></textarea>
+            </div>
+          </div>
+
+          <span class="input-error" id="edit-writing-error"></span>
+
+          <div class="modal-footer">
+            <button class="btn btn-text" id="close-edit-cancel" onclick="Dashboard.closeModal('edit-writing-modal')">Cancel</button>
+            <button class="btn btn-filled" id="edit-writing-save">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         VIEW: Reader (dynamically populated by reader.js)
+         ═══════════════════════════════════════════════════════════ -->
+    <div id="reader-view" class="view"></div>
+
+  </div>
+
+  <!-- ══ ARIA Live Region for Sync ══ -->
+  <div id="sync-announcer" role="status" aria-live="polite" class="sr-only"></div>
+
+  <!-- Scripts (order matters: utilities first, then features, then app) -->
+  <script src="js/storage.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/markdown.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/protection.js"></script>
+  <script src="js/setup.js"></script>
+  <script src="js/feedback.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/reader.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -25,8 +25,22 @@ const Reader = (() => {
     currentWriting = Storage.getWriting(slug);
 
     if (!currentWritingMeta || !currentWriting) {
-      showError('Writing not found.');
-      return;
+      const sheetUrl = Storage.get(Storage.KEYS.SHEET_URL);
+      if (sheetUrl) {
+        document.getElementById('reader-view').innerHTML = '<div style="padding:40px;text-align:center;color:var(--md-primary);">Downloading novel from server... please wait.</div>';
+        
+        const remoteWriting = await Sync.fetchWriting(slug, sheetUrl);
+        if (remoteWriting) {
+          currentWritingMeta = remoteWriting;
+          currentWriting = { chapters: remoteWriting.chapters, chapterMode: true };
+        } else {
+          showError('Writing not found on server or link is invalid.');
+          return;
+        }
+      } else {
+        showError('Writing not found locally and no database connection provided.');
+        return;
+      }
     }
 
     chapters = currentWriting.chapters || [];

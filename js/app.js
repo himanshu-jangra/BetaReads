@@ -37,7 +37,20 @@ const App = (() => {
 
     // Route matching
     if (path.startsWith('/read/')) {
-      const slug = path.replace('/read/', '').split('?')[0];
+      const rawPath = path.replace('/read/', '');
+      const parts = rawPath.split('?');
+      const slug = parts[0];
+      
+      if (parts.length > 1) {
+        const queryParams = new URLSearchParams('?' + parts[1]);
+        if (queryParams.has('db')) {
+           const dbUrl = atob(decodeURIComponent(queryParams.get('db')));
+           Storage.set(Storage.KEYS.SHEET_URL, dbUrl);
+           // Also make sure offline queue works for this DB right away
+           window.dispatchEvent(new Event('online'));
+        }
+      }
+
       showView('reader-view');
       currentView = 'reader';
       Reader.init(slug);

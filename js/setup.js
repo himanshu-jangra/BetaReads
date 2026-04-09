@@ -12,6 +12,7 @@ const Setup = (() => {
 // ============================================================
 
 const CONFIG_TAB = "_config";
+const CONTENT_TAB = "_content_db"; // Dedicated tab for writing hosting
 
 const FEEDBACK_HEADERS = [
   "Timestamp", "Viewer Name", "Feedback Type", "Chapter",
@@ -26,6 +27,7 @@ function doGet(e) {
   const action = e.parameter.action || "ping";
   if (action === "ping")            return json({ status: "betareads_ok" });
   if (action === "get_credentials") return json(getCredentials());
+  if (action === "get_writing")     return json(getWriting(e.parameter.slug));
   return json({ status: "error", message: "Unknown GET action" });
 }
 
@@ -36,6 +38,7 @@ function doPost(e) {
       case "setup_account":   return json(setupAccount(data));
       case "create_tab":      return json(createWritingTab(data.writingTitle));
       case "append_feedback": return json(appendFeedback(data));
+      case "save_writing":    return json(saveWriting(data));
       default:
         return json({ status: "error", message: "Unknown action: " + data.action });
     }
@@ -132,6 +135,59 @@ function appendFeedback(data) {
   });
 
   return { status: "ok", rows: rows.length };
+}
+
+function saveWriting(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(CONTENT_TAB);
+  if (!sheet) {
+    sheet = ss.insertSheet(CONTENT_TAB);
+    sheet.appendRow(["Slug", "Metadata", "Chunk Index", "Total Chunks", "Content Chunk"]);
+    sheet.getRange(1, 1, 1, 5).setFontWeight("bold").setBackground("#d6efe5");
+    sheet.setFrozenRows(1);
+  }
+
+  // Delete older version of this slug
+  const allData = sheet.getDataRange().getValues();
+  for (let i = allData.length - 1; i >= 1; i--) {
+    if (allData[i][0] === data.slug) {
+      sheet.deleteRow(i + 1);
+    }
+  }
+
+  // Append new chunks
+  if (!data.chunks || data.chunks.length === 0) return { status: "ok", message: "No content" };
+  const rows = data.chunks.map(chunk => [
+    data.slug, data.metadata_json, chunk.index, data.chunks.length, chunk.text
+  ]);
+  
+  sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, 5).setValues(rows);
+  return { status: "ok", message: "Writing saved perfectly to backend" };
+}
+
+function getWriting(slug) {
+  if (!slug) return { status: "error", message: "No slug requested" };
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CONTENT_TAB);
+  if (!sheet) return { status: "error", message: "Content Database not found" };
+
+  const allData = sheet.getDataRange().getValues();
+  const chunks = [];
+  let metadata = null;
+
+  for (let i = 1; i < allData.length; i++) {
+    if (allData[i][0] === slug) {
+      if (!metadata) metadata = allData[i][1];
+      chunks.push({ index: allData[i][2], text: allData[i][4] });
+    }
+  }
+
+  if (chunks.length === 0) return { status: "error", message: "Writing not found on server" };
+
+  chunks.sort((a, b) => a.index - b.index);
+  const fullContentString = chunks.map(c => c.text).join("");
+
+  return { status: "ok", slug: slug, metadata: metadata, content: fullContentString };
 }
 
 // ── Utility ──────────────────────────────────────────────────

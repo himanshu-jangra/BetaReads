@@ -228,6 +228,83 @@ const Sync = (() => {
     return [];
   }
 
+  /**
+   * Publish writing to Google Sheets backend
+   */
+  async function publishWriting(writingObj) {
+    const sheetUrl = Storage.get(Storage.KEYS.SHEET_URL);
+    if (!sheetUrl || !navigator.onLine) return { status: 'offline' };
+
+    const metadataJson = JSON.stringify({
+      title: writingObj.title,
+      writtenBy: writingObj.writtenBy,
+      type: writingObj.type,
+      config: writingObj.feedbackConfig,
+      instructions: writingObj.instructions || '',
+      password: writingObj.password || ''
+    });
+
+    const fullContentJson = JSON.stringify(writingObj.chapters || []);
+    const CHUNK_SIZE = 40000;
+    const chunks = [];
+    
+    for (let i = 0; i < fullContentJson.length; i += CHUNK_SIZE) {
+      chunks.push({
+        index: i / CHUNK_SIZE,
+        text: fullContentJson.substring(i, i + CHUNK_SIZE)
+      });
+    }
+
+    try {
+      const response = await fetchWithRetry(sheetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+           action: 'save_writing',
+           slug: writingObj.slug,
+           metadata_json: metadataJson,
+           chunks: chunks
+        })
+      });
+      return await response.json();
+    } catch (e) {
+      console.error('Publish writing failed', e);
+      return { status: 'error', message: e.message };
+    }
+  }
+
+  /**
+   * Fetch writing from Google Sheets backend
+   */
+  async function fetchWriting(slug, sheetUrl) {
+    if (!sheetUrl) return null;
+
+    try {
+      const response = await fetchWithRetry(`${sheetUrl}?action=get_writing&slug=${encodeURIComponent(slug)}`);
+      const data = await response.json();
+      if (data.status === 'ok') {
+        let metadata = {};
+        try { metadata = JSON.parse(data.metadata || "{}"); } catch (e) {}
+        let chapters = [];
+        try { chapters = JSON.parse(data.content || "[]"); } catch (e) {}
+        
+        return {
+          slug: data.slug,
+          title: metadata.title || 'Untitled',
+          writtenBy: metadata.writtenBy || 'Author',
+          type: metadata.type || 'Other',
+          instructions: metadata.instructions || null,
+          password: metadata.password || null,
+          feedbackConfig: metadata.config || { inline:true, general:true, rating:true, structured:true },
+          chapters: chapters,
+        };
+      }
+    } catch (e) {
+      console.error('Fetch remote writing failed', e);
+    }
+    return null;
+  }
+
   return {
     init,
     queueFeedback,
@@ -236,6 +313,8 @@ const Sync = (() => {
     getQueueSize,
     updateStatus,
     destroy,
-    fetchFeedback
+    fetchFeedback,
+    publishWriting,
+    fetchWriting
   };
 })();

@@ -176,7 +176,9 @@ const Dashboard = (() => {
    * Render a single writing card
    */
   function renderWritingCard(writing) {
-    const shareUrl = `${window.location.origin}${window.location.pathname}#/read/${writing.slug}`;
+    const sheetUrl = Storage.get(Storage.KEYS.SHEET_URL) || '';
+    const encodedDb = sheetUrl ? encodeURIComponent(btoa(sheetUrl)) : '';
+    const shareUrl = `${window.location.origin}${window.location.pathname}#/read/${writing.slug}${encodedDb ? '?db=' + encodedDb : ''}`;
     const feedbackTypes = [];
     const fc = writing.feedbackConfig || {};
     if (fc.inline !== false) feedbackTypes.push('💬 Inline');
@@ -507,7 +509,9 @@ const Dashboard = (() => {
    * Copy share link for a writing
    */
   function copyLink(slug) {
-    const url = `${window.location.origin}${window.location.pathname}#/read/${slug}`;
+    const sheetUrl = Storage.get(Storage.KEYS.SHEET_URL) || '';
+    const encodedDb = sheetUrl ? encodeURIComponent(btoa(sheetUrl)) : '';
+    const url = `${window.location.origin}${window.location.pathname}#/read/${slug}${encodedDb ? '?db=' + encodedDb : ''}`;
     navigator.clipboard.writeText(url).then(() => {
       App.showSnackbar('Share link copied to clipboard!');
     });

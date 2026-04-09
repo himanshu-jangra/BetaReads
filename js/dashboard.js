@@ -366,7 +366,11 @@ const Dashboard = (() => {
     Storage.setWritings(writings);
 
     // Sync remote updates dynamically
-    Sync.publishWriting({ ...writing, chapters: writingData ? writingData.chapters : [] });
+    Sync.publishWriting({ ...writing, chapters: writingData ? writingData.chapters : [] }).then(res => {
+      if (res && res.status === 'error') {
+        App.showSnackbar('Database Push Failed: ' + (res.message || 'Unknown error'));
+      }
+    });
 
     closeModal('edit-writing-modal');
     editingSlug = null;
@@ -479,8 +483,16 @@ const Dashboard = (() => {
         });
 
         // Publish to remote hosting database
-        Sync.publishWriting({ ...writing, chapters: chapters }).then(res => console.log('Novel payload saved:', res));
+        Sync.publishWriting({ ...writing, chapters: chapters }).then(res => {
+          console.log('Novel payload saved:', res);
+          if (res && res.status === 'error') {
+            App.showSnackbar('Database Push Failed: ' + (res.message || 'Unknown error'));
+          } else {
+            console.log('Successfully synced blocks.');
+          }
+        });
       } catch (e) {
+        App.showSnackbar('Connection fail: ' + e.message);
         console.warn('Could not create sheet tab or upload remote payload:', e);
       }
     }

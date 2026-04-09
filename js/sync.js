@@ -141,12 +141,18 @@ const Sync = (() => {
 
   /**
    * Fetch with exponential backoff retry
+   * Handles Google Apps Script redirect behavior
    */
-  async function fetchWithRetry(url, options, retries = MAX_RETRIES) {
+  async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
     for (let i = 0; i < retries; i++) {
       try {
-        const response = await fetch(url, options);
-        if (response.ok) return response;
+        // Google Apps Script redirects POST to GET for the response.
+        // We must follow redirects (default behavior).
+        const response = await fetch(url, { ...options, redirect: 'follow' });
+        // GAS responses after redirect are typically 200 OK
+        if (response.ok || response.type === 'opaque' || response.status === 0) {
+          return response;
+        }
         throw new Error(`HTTP ${response.status}`);
       } catch (e) {
         if (i === retries - 1) throw e;

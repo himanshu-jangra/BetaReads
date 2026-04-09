@@ -472,28 +472,26 @@ const Dashboard = (() => {
     writings.push(writing);
     Storage.setWritings(writings);
 
-    // Create tab in Google Sheet
+    // Create tab in Google Sheet for feedback
     const sheetUrl = Storage.get(Storage.KEYS.SHEET_URL);
     if (sheetUrl && navigator.onLine) {
-      try {
-        await fetch(sheetUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({ action: 'create_tab', writingTitle: title })
-        });
+      // 1) Create feedback tab (fire-and-forget, non-blocking)
+      fetch(sheetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'create_tab', writingTitle: title })
+      }).catch(e => console.warn('Could not create feedback tab:', e));
 
-        // Publish to remote hosting database
-        Sync.publishWriting({ ...writing, chapters: chapters }).then(res => {
-          console.log('Novel payload saved:', res);
-          if (res && res.status === 'error') {
-            App.showSnackbar('Database Push Failed: ' + (res.message || 'Unknown error'));
-          } else {
-            console.log('Successfully synced blocks.');
-          }
-        });
+      // 2) Publish writing content to _content_db (independent call)
+      try {
+        const publishResult = await Sync.publishWriting({ ...writing, chapters: chapters });
+        console.log('Publish result:', publishResult);
+        if (publishResult && publishResult.status === 'error') {
+          App.showSnackbar('Publish failed: ' + (publishResult.message || 'Unknown error'));
+        }
       } catch (e) {
-        App.showSnackbar('Connection fail: ' + e.message);
-        console.warn('Could not create sheet tab or upload remote payload:', e);
+        App.showSnackbar('Publish failed: ' + e.message);
+        console.error('publishWriting error:', e);
       }
     }
 

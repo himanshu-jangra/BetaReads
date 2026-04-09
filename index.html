@@ -79,6 +79,11 @@
               <button class="copy-btn" id="setup-copy-script" style="position:absolute;top:8px;right:8px;">📋 Copy Script</button>
             </div>
 
+            <div class="info-box" style="margin-top:12px;">
+              <span class="info-box-icon">☁️</span>
+              <span>This script handles <strong>feedback collection</strong> and <strong>content hosting</strong>. Your writings are stored in a <code>_content_db</code> tab so external readers can access them via a shareable link.</span>
+            </div>
+
             <div class="input-group">
               <label for="setup-sheet-url">Google Apps Script Web App URL</label>
               <input type="url" class="input-field" id="setup-sheet-url" placeholder="https://script.google.com/macros/s/..." autocomplete="url">
@@ -90,6 +95,11 @@
             <div class="info-box">
               <span class="info-box-icon">🔒</span>
               <span>Your credentials are stored in your own Google Sheet, which only you control. BetaReads never sends your data to any third-party server.</span>
+            </div>
+
+            <div class="info-box" style="background: var(--md-tertiary-container); color: var(--md-on-tertiary-container);">
+              <span class="info-box-icon">⚠️</span>
+              <span><strong>Updating?</strong> If you already have a sheet, paste the new script, then go to <strong>Deploy → Manage Deployments → ✏️ → New version → Deploy</strong>.</span>
             </div>
           </div>
 
